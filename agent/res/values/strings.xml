@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">agent</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="hello_world">Hello Robot!</string>
     <string name="action_settings">Settings</string>
 
 </resources>
