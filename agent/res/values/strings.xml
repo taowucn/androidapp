@@ -4,5 +4,11 @@
     <string name="app_name">agent</string>
     <string name="hello_world">Hello Robot!</string>
     <string name="action_settings">Settings</string>
-
+    <string name="info">Get GPS</string>
+    <string name="up">Up</string>
+    <string name="down">Down</string>
+    <string name="left">Left</string>
+    <string name="right">Right</string>
+	<string name="stop">Stop</string>
+	
 </resources>
