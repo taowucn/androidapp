@@ -5,6 +5,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.app.TabActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -18,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -27,7 +29,7 @@ import android.widget.TextView;
 import android.widget.TabHost.OnTabChangeListener;
 import android.os.Build;
 
-public class MainActivity extends TabActivity {
+public class MainActivity extends BlunoLibrary {
 	static final String TAG = "RobotAgent";
 
 	private TextView display;
@@ -35,6 +37,7 @@ public class MainActivity extends TabActivity {
 	private LinearLayout layout;
 	private ScrollView scrollView;
 	private Robot robot;
+	private Button buttonScan;
 	
 	private Handler handler = new Handler();
 	
@@ -42,15 +45,29 @@ public class MainActivity extends TabActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.d(TAG, "onCreate");
+		
 		setContentView(R.layout.activity_main);
-
+		onCreateProcess();
+		onResumeProcess();
+		serialBegin(115200);
+		
 		display = (TextView) this.findViewById(R.id.display_windows);
 		layout = (LinearLayout) findViewById(R.id.tab1_layout);
 		scrollView = (ScrollView) findViewById(R.id.tab1);
 
+        buttonScan = (Button) findViewById(R.id.buttonScan);					//initial the button for scanning the BLE device
+        buttonScan.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				buttonScanOnClickProcess();										//Alert Dialog for selecting the BLE device
+			}
+		});
+               
 		buildTabView();
-		buildDrive();
-
+		
+		//buildDrive();
+		//robot = new Robot();
+		
 //		if (savedInstanceState == null) {
 //			getSupportFragmentManager().beginTransaction()
 //					.add(R.id.container, new PlaceholderFragment()).commit();
@@ -256,10 +273,63 @@ public class MainActivity extends TabActivity {
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 			Log.d(TAG, "onCreateView");
+			
 			View rootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
 			return rootView;
 		}
 	}
 
+	@Override
+	public void onConectionStateChange(
+			connectionStateEnum theConnectionState) {
+		// TODO Auto-generated method stub
+		switch (theConnectionState) {											//Four connection state
+		case isConnected:
+			buttonScan.setText("Connected");
+			break;
+		case isConnecting:
+			buttonScan.setText("Connecting");
+			break;
+		case isToScan:
+			buttonScan.setText("Scan");
+			break;
+		case isScanning:
+			buttonScan.setText("Scanning");
+			break;
+		case isDisconnecting:
+			buttonScan.setText("isDisconnecting");
+			break;
+		default:
+			break;
+		}
+	}
+
+	@Override
+	public void onSerialReceived(String theString) {
+		// TODO Auto-generated method stub
+		Log.d(TAG, theString);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		onActivityResultProcess(requestCode, resultCode, data);					//onActivityResult Process by BlunoLibrary
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+    @Override
+    protected void onPause() {
+        super.onPause();
+        onPauseProcess();														//onPause Process by BlunoLibrary
+    }
+    
+	protected void onStop() {
+		super.onStop();
+		onStopProcess();														//onStop Process by BlunoLibrary
+	}
+    
+	@Override
+    protected void onDestroy() {
+        super.onDestroy();	
+        onDestroyProcess();														//onDestroy Process by BlunoLibrary
+    }
 }

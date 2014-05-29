@@ -1104,15 +1104,17 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f050016;
         public static final int action_menu_presenter=0x7f050017;
         public static final int action_mode_close_button=0x7f050024;
-        public static final int action_settings=0x7f050047;
+        public static final int action_settings=0x7f050049;
         public static final int activity_chooser_view_content=0x7f050025;
         public static final int always=0x7f05000b;
         public static final int beginning=0x7f050011;
-        public static final int button_info=0x7f05003d;
+        public static final int buttonScan=0x7f05003d;
         public static final int checkbox=0x7f05002d;
         public static final int collapseActionView=0x7f05000d;
         public static final int container=0x7f05003c;
         public static final int default_activity_button=0x7f050028;
+        public static final int device_address=0x7f050048;
+        public static final int device_name=0x7f050047;
         public static final int dialog=0x7f05000e;
         public static final int disableHome=0x7f050008;
         public static final int display_windows=0x7f050044;
@@ -1218,7 +1220,8 @@ containing a value of this type.
         public static final int abc_simple_decor=0x7f030017;
         public static final int activity_main=0x7f030018;
         public static final int fragment_main=0x7f030019;
-        public static final int support_simple_spinner_dropdown_item=0x7f03001a;
+        public static final int listitem_device=0x7f03001a;
+        public static final int support_simple_spinner_dropdown_item=0x7f03001b;
     }
     public static final class menu {
         public static final int main=0x7f0c0000;
@@ -1266,12 +1269,30 @@ containing a value of this type.
         public static final int abc_shareactionprovider_share_with_application=0x7f0a000b;
         public static final int action_settings=0x7f0a000f;
         public static final int app_name=0x7f0a000d;
+        public static final int ble_not_supported=0x7f0a0016;
+        public static final int connected=0x7f0a001b;
+        public static final int disconnected=0x7f0a001c;
         public static final int down=0x7f0a0012;
+        public static final int error_bluetooth_not_supported=0x7f0a001e;
         public static final int hello_world=0x7f0a000e;
         public static final int info=0x7f0a0010;
+        public static final int label_data=0x7f0a0017;
+        public static final int label_device_address=0x7f0a0018;
+        public static final int label_state=0x7f0a0019;
         public static final int left=0x7f0a0013;
+        /**  Menu items 
+         */
+        public static final int menu_connect=0x7f0a0022;
+        public static final int menu_disconnect=0x7f0a0023;
+        public static final int menu_scan=0x7f0a0024;
+        public static final int menu_stop=0x7f0a0025;
+        public static final int no_data=0x7f0a001a;
         public static final int right=0x7f0a0014;
         public static final int stop=0x7f0a0015;
+        public static final int title_devices=0x7f0a001d;
+        public static final int unknown_characteristic=0x7f0a0020;
+        public static final int unknown_device=0x7f0a001f;
+        public static final int unknown_service=0x7f0a0021;
         public static final int up=0x7f0a0011;
     }
     public static final class style {
@@ -2651,7 +2672,7 @@ containing a value of this type.
          */
         public static final int[] MenuView = {
             0x010100ae, 0x0101012c, 0x0101012d, 0x0101012e,
-            0x0101012f, 0x01010130, 0x01010131, 0x010103f8
+            0x0101012f, 0x01010130, 0x01010131, 0x01010435
         };
         /**
           <p>
