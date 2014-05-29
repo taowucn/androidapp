@@ -1,5 +1,6 @@
 package com.robot.agent;
 
+
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -36,7 +37,7 @@ public class MainActivity extends BlunoLibrary {
 	private String deviceAddress;
 	private LinearLayout layout;
 	private ScrollView scrollView;
-	private Robot robot;
+//	private Robot robot;
 	private Button buttonScan;
 	
 	private Handler handler = new Handler();
@@ -48,9 +49,9 @@ public class MainActivity extends BlunoLibrary {
 		
 		setContentView(R.layout.activity_main);
 		onCreateProcess();
-		onResumeProcess();
-		serialBegin(115200);
 		
+		serialBegin(115200);
+		onResumeProcess();
 		display = (TextView) this.findViewById(R.id.display_windows);
 		layout = (LinearLayout) findViewById(R.id.tab1_layout);
 		scrollView = (ScrollView) findViewById(R.id.tab1);
@@ -65,7 +66,7 @@ public class MainActivity extends BlunoLibrary {
                
 		buildTabView();
 		
-		//buildDrive();
+		buildDrive();
 		//robot = new Robot();
 		
 //		if (savedInstanceState == null) {
@@ -99,13 +100,22 @@ public class MainActivity extends BlunoLibrary {
 	
 	private void buildDrive() {
 		ImageButton upBtn = (ImageButton) this.findViewById(R.id.up);
-		upBtn.setOnTouchListener(onTouchListener);
+		// upBtn.setOnClickListener(driveClickListener);
+		// upBtn.setLongClickable(longClickable);
+		 upBtn.setOnTouchListener(onTouchListener);
+		//upBtn.setOnKeyListener(driveKeyListener);
 		ImageButton downBtn = (ImageButton) this.findViewById(R.id.down);
+		// downBtn.setOnClickListener(driveClickListener);
+		// downBtn.setOnKeyListener(driveKeyListener);
 		downBtn.setOnTouchListener(onTouchListener);
 		ImageButton leftBtn = (ImageButton) this.findViewById(R.id.left);
+		// leftBtn.setOnClickListener(driveClickListener);
+		// leftBtn.setOnKeyListener(driveKeyListener);
 		leftBtn.setOnTouchListener(onTouchListener);
 		leftBtn.setOnClickListener(driveClickListener);
 		ImageButton rightBtn = (ImageButton) this.findViewById(R.id.right);
+		// rightBtn.setOnClickListener(driveClickListener);
+		// rightBtn.setOnKeyListener(driveKeyListener);
 		rightBtn.setOnTouchListener(onTouchListener);
 		rightBtn.setOnClickListener(driveClickListener);
 		ImageButton stopBtn = (ImageButton) this.findViewById(R.id.stop);
@@ -124,30 +134,29 @@ public class MainActivity extends BlunoLibrary {
 			switch (event.getAction()) {
 			
 			case KeyEvent.ACTION_DOWN: {
-				Log.d(TAG, "key.id=" + keyCode);
+				//Log.d(TAG, "key.id=" + keyCode);
 				switch (keyCode) {
 				case R.id.left:
 				case R.id.right: {
-					robot.stop();
+					//robot.stop();
 				}
 					break;
 				}
-				//display.append("down");
 			}
 				break;
 			case KeyEvent.ACTION_UP: {
 				switch (keyCode) {
 				case R.id.up:
 				case R.id.down:
-					// robot.setSpeed((byte) 0x10, (byte) 0x10);
-					break;
 				case R.id.left:
 				case R.id.right: {
-					robot.stop();
+					Log.d(TAG,"===========OnKeyListener = stop ");
+					serialSend("e");
+					//robot.stop();
 				}
 					break;
 				}
-				//display.append("up");
+				
 			}
 				break;
 			}
@@ -157,63 +166,90 @@ public class MainActivity extends BlunoLibrary {
 
 	private OnClickListener driveClickListener = new OnClickListener() {
 		public void onClick(View view) {
-			Log.d(TAG, "view.id=" + view.getId());
+			//Log.d(TAG, "view.id=" + view.getId());
 			switch (view.getId()) {
 			case R.id.left:
 			case R.id.right:
 			case R.id.stop:{
-				robot.stop();
+				Log.d(TAG,"===========OnClickListener = stop ");
+				serialSend("e");
+				//robot.stop();
 			}
 				break;
 			}
-			display.append("stop\n");
+			display.append("Stop\n");
 			handler.post(scrollToBottom);
 		}
 	};
+	
 	private OnTouchListener onTouchListener = new OnTouchListener() {
-
 		public boolean onTouch(View view, MotionEvent event) {
-			Log.d(TAG, "event.action=" + view.getId());
+			String msg = "";
+			//Log.d(TAG, "event.action=" + view.getId());
 			switch (event.getAction()) {
 			case MotionEvent.ACTION_MOVE: {
+				Log.d(TAG,"===========OnTouchListener:ACTION_MOVE = ? ");
 				dispatchMsg(view.getId());
+				break;
+			}
+			case MotionEvent.ACTION_UP: {
+				Log.d(TAG,"===========OnTouchListener:ACTION_CANCEL = stop");
+				msg = "Stop";
+				serialSend("e");
 				break;
 			}
 			default:
 				break;
 			}
+			display.append("" + msg + "\n");
+			handler.post(scrollToBottom);
 			return false;
 		}
 	};
 
 	private void dispatchMsg(int id) {
-		String msg = "no msg";
+		String msg = "";
 		switch (id) {
 
 		case R.id.up: {
-			robot.changeSpeed((byte) 0x01, (byte) 0x01);
+			Log.d(TAG,"===========ACTION_MOVE = a");
+			msg = "Foward";
+			serialSend("a");
+			//robot.changeSpeed((byte) 0x01, (byte) 0x01);
 			// msg = CommandUtil.driveMotorS(this, (byte) 0xff, (byte) 0xff);
 			break;
 		}
 		case R.id.down: {
-			robot.changeSpeed((byte) (-0x01), (byte) (-0x01));
+			Log.d(TAG,"===========ACTION_MOVE = b");
+			msg = "Back";
+			serialSend("b");
+			//robot.changeSpeed((byte) (-0x01), (byte) (-0x01));
 			// msg = CommandUtil.driveMotorS(this, (byte) 0x00, (byte) 0x00);
 			break;
 		}
 		case R.id.left: {
+			Log.d(TAG,"===========ACTION_MOVE = d");
+			msg = "Left";
+			serialSend("d");
 			//robot.stop();
-			robot.changeSpeed((byte) (-0x01), (byte) (0x01));
+			//robot.changeSpeed((byte) (-0x01), (byte) (0x01));
 			// msg = CommandUtil.driveMotorS(this, (byte) 0x00, (byte) 0xff);
 			break;
 		}
 		case R.id.right: {
+			Log.d(TAG,"===========ACTION_MOVE = c");
+			msg = "Right";
+			serialSend("c");
 			//robot.stop();
-			robot.changeSpeed((byte) (0x01), (byte) (-0x01));
+			//robot.changeSpeed((byte) (0x01), (byte) (-0x01));
 			// msg = CommandUtil.driveMotorS(this, (byte) 0xff, (byte) 0x00);
 			break;
 		}
 		case R.id.stop: {
-			robot.stop();
+			Log.d(TAG,"===========ACTION_MOVE = e");
+			msg = "Stop";
+			serialSend("e");
+			//robot.stop();
 			// msg = CommandUtil.driveMotorS(this, (byte) 0x80, (byte) 0x80);
 			break;
 		}
@@ -221,9 +257,9 @@ public class MainActivity extends BlunoLibrary {
 			break;
 
 		}
-		msg = "left:" + robot.getLeftSpeed() + " Right:"
-				+ robot.getRightSpeed();
-		display.append("Robot Speed:" + msg + "\n");
+//		msg = "left:" + robot.getLeftSpeed() + " Right:"
+//				+ robot.getRightSpeed();
+		display.append("" + msg + "\n");
 		handler.post(scrollToBottom);
 	}
 
@@ -231,7 +267,7 @@ public class MainActivity extends BlunoLibrary {
 	private Thread scrollToBottom = new Thread() {
 		@Override
 		public void run() {
-			Log.d(TAG, "Y=" + scrollView.getScrollY());
+//			Log.d(TAG, "Y=" + scrollView.getScrollY());
 			int off = layout.getMeasuredHeight() - scrollView.getHeight();
 			if (off > 0) {
 				scrollView.scrollTo(0, off);
@@ -309,6 +345,8 @@ public class MainActivity extends BlunoLibrary {
 	public void onSerialReceived(String theString) {
 		// TODO Auto-generated method stub
 		Log.d(TAG, theString);
+		//display.append("Info:" + theString + "");
+		//handler.post(scrollToBottom);
 	}
 	
 	@Override

@@ -30,7 +30,7 @@
 				<ImageButton android:id="@+id/left" android:text="@string/left"
 					android:src="@drawable/left" />
 				<ImageButton android:id="@+id/stop" android:text="@string/stop"
-					android:src="@drawable/stop" />
+					android:src="@android:drawable/ic_delete" />
 				<ImageButton android:id="@+id/right" android:text="@string/right"
 					android:src="@drawable/right" />
 			</TableRow>

@@ -86,9 +86,9 @@ public abstract  class BlunoLibrary  extends Activity{
 	public boolean mConnected = false;
 
     private final static String TAG = BlunoLibrary.class.getSimpleName();
-
+    
     private Runnable mConnectingOverTimeRunnable=new Runnable(){
-
+    	
 		@Override
 		public void run() {
         	if(mConnectionState==connectionStateEnum.isConnecting)
@@ -146,6 +146,7 @@ public abstract  class BlunoLibrary  extends Activity{
 				
 		        if(mDeviceName.equals("No Device Available") && mDeviceAddress.equals("No Address Available"))
 		        {
+		        	Log.d(TAG, "No Device Available!!!!!!");
 		        	mConnectionState=connectionStateEnum.isToScan;
 		        	onConectionStateChange(mConnectionState);
 		        }
