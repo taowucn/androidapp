@@ -1,6 +1,9 @@
 package com.robot.agent;
 
 
+import java.io.IOException;
+
+import com.robot.socket.TCPServer;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -63,10 +66,18 @@ public class MainActivity extends BlunoLibrary {
 				buttonScanOnClickProcess();										//Alert Dialog for selecting the BLE device
 			}
 		});
-               
+
 		buildTabView();
 		
 		buildDrive();
+		
+		TCPServer.init();
+		try {
+			TCPServer.bind(9600);
+		} catch (IOException e) {
+			Log.d(TAG, e.getMessage());
+		}
+		Log.d(TAG, "TCP Server init ok");
 		//robot = new Robot();
 		
 //		if (savedInstanceState == null) {
@@ -369,5 +380,7 @@ public class MainActivity extends BlunoLibrary {
     protected void onDestroy() {
         super.onDestroy();	
         onDestroyProcess();														//onDestroy Process by BlunoLibrary
+        TCPServer.stop();
+        Log.d(TAG, "TCP Server stop OK");
     }
 }
