@@ -1,5 +1,8 @@
 package com.robot.remote;
 
+import net.roboduino.commons.BaseMsg;
+import net.roboduino.commons.ProtocolConstant;
+
 import com.robot.remote.socket.TCPClient;
 
 import android.support.v7.app.ActionBarActivity;
@@ -166,7 +169,8 @@ public class RemoteActivity extends ActionBarActivity {
 			case R.id.right:
 			case R.id.stop:{
 				Log.d(TAG,"===========OnClickListener = stop ");
-				
+				BaseMsg msg = new BaseMsg(ProtocolConstant.MSG_CMD_MOTOR_SPEED, new byte[] { 1, 2 });
+				TCPClient.sendMsg(msg);
 //				serialSend("e");
 				//robot.stop();
 			}
@@ -306,11 +310,10 @@ public class RemoteActivity extends ActionBarActivity {
 			return rootView;
 		}
 	}
-	
+
 	@Override
     protected void onDestroy() {
         super.onDestroy();	
-        
         TCPClient.disconnect();
         Log.d(TAG, "TCPClient disconnect OK");
     }
