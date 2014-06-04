@@ -330,7 +330,7 @@ public class MainActivity extends BlunoLibrary {
 	@Override
 	public void onConectionStateChange(
 			connectionStateEnum theConnectionState) {
-		// TODO Auto-generated method stub
+
 		switch (theConnectionState) {											//Four connection state
 		case isConnected:
 			buttonScan.setText("Connected");
@@ -354,7 +354,6 @@ public class MainActivity extends BlunoLibrary {
 
 	@Override
 	public void onSerialReceived(String theString) {
-		// TODO Auto-generated method stub
 		Log.d(TAG, theString);
 		//display.append("Info:" + theString + "");
 		//handler.post(scrollToBottom);
