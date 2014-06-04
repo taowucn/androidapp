@@ -16,8 +16,8 @@
     <string name="label_device_address">Device address:</string>
     <string name="label_state">State:</string>
     <string name="no_data">No data</string>
-    <string name="connected">Connected</string>
-    <string name="disconnected">Disconnected</string>
+    <!-- string name="connected">Connected</string-->
+    <!--string name="disconnected">Disconnected</string-->
     <string name="title_devices">BLE Device Scan</string>
     <string name="error_bluetooth_not_supported">Bluetooth not supported.</string>
 
@@ -31,4 +31,13 @@
     <string name="menu_scan">Scan</string>
     <string name="menu_stop">Stop</string>
     
+    <string name="setting">Setting</string>
+    <string name="wifi_setting">WiFi Setting</string>
+    <string name="tcp_mgr">Agent Setting</string>
+	<string name="connect_address">Address</string>
+	<string name="tcp_connect">TCP</string>
+	<string name="udp_connect">UDP</string>
+	<string name="connected">Connected</string>
+	<string name="disconnected">Disconnected</string>
+	<string name="default_ip">192.168.1.1</string>
 </resources>

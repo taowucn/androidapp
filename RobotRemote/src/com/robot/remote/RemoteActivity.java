@@ -1,8 +1,11 @@
 package com.robot.remote;
 
+import com.robot.remote.socket.TCPClient;
+
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -96,25 +99,26 @@ public class RemoteActivity extends ActionBarActivity {
 	};
 
 	private void buildDrive() {
-		ImageButton upBtn = (ImageButton) this.findViewById(R.id.up);
-		// upBtn.setOnClickListener(driveClickListener);
-		// upBtn.setLongClickable(longClickable);
-		 upBtn.setOnTouchListener(onTouchListener);
-		//upBtn.setOnKeyListener(driveKeyListener);
-		ImageButton downBtn = (ImageButton) this.findViewById(R.id.down);
-		// downBtn.setOnClickListener(driveClickListener);
-		// downBtn.setOnKeyListener(driveKeyListener);
-		downBtn.setOnTouchListener(onTouchListener);
-		ImageButton leftBtn = (ImageButton) this.findViewById(R.id.left);
-		// leftBtn.setOnClickListener(driveClickListener);
-		// leftBtn.setOnKeyListener(driveKeyListener);
-		leftBtn.setOnTouchListener(onTouchListener);
-		leftBtn.setOnClickListener(driveClickListener);
-		ImageButton rightBtn = (ImageButton) this.findViewById(R.id.right);
-		// rightBtn.setOnClickListener(driveClickListener);
-		// rightBtn.setOnKeyListener(driveKeyListener);
-		rightBtn.setOnTouchListener(onTouchListener);
-		rightBtn.setOnClickListener(driveClickListener);
+//		ImageButton upBtn = (ImageButton) this.findViewById(R.id.up);
+//		// upBtn.setOnClickListener(driveClickListener);
+//		// upBtn.setLongClickable(longClickable);
+//		 upBtn.setOnTouchListener(onTouchListener);
+//		//upBtn.setOnKeyListener(driveKeyListener);
+//		ImageButton downBtn = (ImageButton) this.findViewById(R.id.down);
+//		// downBtn.setOnClickListener(driveClickListener);
+//		// downBtn.setOnKeyListener(driveKeyListener);
+//		downBtn.setOnTouchListener(onTouchListener);
+//		ImageButton leftBtn = (ImageButton) this.findViewById(R.id.left);
+//		// leftBtn.setOnClickListener(driveClickListener);
+//		// leftBtn.setOnKeyListener(driveKeyListener);
+//		leftBtn.setOnTouchListener(onTouchListener);
+//		leftBtn.setOnClickListener(driveClickListener);
+//		ImageButton rightBtn = (ImageButton) this.findViewById(R.id.right);
+//		// rightBtn.setOnClickListener(driveClickListener);
+//		// rightBtn.setOnKeyListener(driveKeyListener);
+//		rightBtn.setOnTouchListener(onTouchListener);
+//		rightBtn.setOnClickListener(driveClickListener);
+//		
 		ImageButton stopBtn = (ImageButton) this.findViewById(R.id.stop);
 		stopBtn.setOnClickListener(driveClickListener);
 	}
@@ -162,6 +166,7 @@ public class RemoteActivity extends ActionBarActivity {
 			case R.id.right:
 			case R.id.stop:{
 				Log.d(TAG,"===========OnClickListener = stop ");
+				
 //				serialSend("e");
 				//robot.stop();
 			}
@@ -278,6 +283,8 @@ public class RemoteActivity extends ActionBarActivity {
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
+			Intent intent = new Intent(this, PreferencesActivity.class);
+			startActivity(intent);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -299,5 +306,13 @@ public class RemoteActivity extends ActionBarActivity {
 			return rootView;
 		}
 	}
+	
+	@Override
+    protected void onDestroy() {
+        super.onDestroy();	
+        
+        TCPClient.disconnect();
+        Log.d(TAG, "TCPClient disconnect OK");
+    }
 
 }
