@@ -56,34 +56,15 @@ public class PreferencesActivity extends PreferenceActivity {
 				if ((Boolean) obj) {
 					preference.setSummary(R.string.connected);
 					TCPClient.init();
-					try {
-						TCPClient.connect(addressPreference.getText(), 9600);
-					} catch (InterruptedException e) {
-						Log.e(TAG, e.getMessage());
-					}
+					Log.d(TAG, "TCPClient init ok");
 					// 处理tcp连接
 				} else {
 					// 处理tcp断开
 					TCPClient.disconnect();
+					Log.d(TAG, "TCPClient disconnect ok");
 					preference.setSummary(R.string.disconnected);
 				}
 			} 
-//				else if (StringUtils.equals(preference.getKey(), "udp_connect")) {
-//				if ((Boolean) obj) {
-//					preference.setSummary(R.string.connected);
-//					UDPClient.init();
-//					try {
-//						UDPClient.connect(addressPreference.getText(), 9800);
-//					} catch (InterruptedException e) {
-//						logger.error(e.getMessage(), e);
-//					}
-//					// 处理udp连接
-//				} else {
-//					// 处理udp断开
-//					UDPClient.disconnect();
-//					preference.setSummary(R.string.disconnected);
-//				}
-//			}
 
 			return true;
 		}

@@ -17,9 +17,12 @@ import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import android.util.Log;
+
 public class TCPServer {
 //	private static final Logger logger = LoggerFactory
 //			.getLogger(TCPServer.class);
+	static final String TAG = "TCPServer";
 	private static NioSocketAcceptor acceptor;
 	//private static ExecutorService executorService;
 
@@ -40,6 +43,7 @@ public class TCPServer {
 
 	public static void bind(int port) throws IOException {
 		acceptor.bind(new InetSocketAddress(port));
+		Log.d(TAG, "The TCP listen port is listening:" + port);
 //		logger.info("The TCP listen port is listening:{}", port);
 	}
 
@@ -63,6 +67,7 @@ public class TCPServer {
 				}
 			}
 		} catch (SocketException e) {
+			Log.d(TAG, "" + e.getMessage());
 //			logger.error(e.getMessage(), e);
 		}
 		return "";

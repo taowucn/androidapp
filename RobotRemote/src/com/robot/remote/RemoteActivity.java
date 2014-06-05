@@ -39,7 +39,6 @@ public class RemoteActivity extends ActionBarActivity {
 	private LinearLayout layout;
 	private ScrollView scrollView;
 	private Button buttonScan;
-	
 	private Handler handler = new Handler();
 	
 	@Override
@@ -57,21 +56,30 @@ public class RemoteActivity extends ActionBarActivity {
         buttonScan.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				//buttonScanOnClickProcess();										//Alert Dialog for selecting the BLE device
+				 ClientStart clientStart =  new ClientStart();
+				 clientStart.start();
 			}
 		});
 
         buildTabView();
+        Log.d(TAG, "buildTabView Done");
         buildDrive();
         
-        Log.d(TAG, "buildTabView Done");
 //        
 //		if (savedInstanceState == null) {
 //			getSupportFragmentManager().beginTransaction()
 //					.add(R.id.container, new PlaceholderFragment()).commit();
 //		}
 	}
-
+	
+	class ClientStart extends Thread{
+		@Override
+		public void run() {
+	        TCPClient.init();
+	        Log.d(TAG, "TCPClient init Down");
+		}
+	}
+	
 	/** create tab list view */
 	private void buildTabView() {
 		TabHost tabHost = (TabHost) findViewById(android.R.id.tabhost); //this.getTabHost();
@@ -169,8 +177,7 @@ public class RemoteActivity extends ActionBarActivity {
 			case R.id.right:
 			case R.id.stop:{
 				Log.d(TAG,"===========OnClickListener = stop ");
-				BaseMsg msg = new BaseMsg(ProtocolConstant.MSG_CMD_MOTOR_SPEED, new byte[] { 1, 2 });
-				TCPClient.sendMsg(msg);
+				TCPClient.sendMsg("hi, tao");
 //				serialSend("e");
 				//robot.stop();
 			}
@@ -313,7 +320,7 @@ public class RemoteActivity extends ActionBarActivity {
 
 	@Override
     protected void onDestroy() {
-        super.onDestroy();	
+        super.onDestroy();
         TCPClient.disconnect();
         Log.d(TAG, "TCPClient disconnect OK");
     }
