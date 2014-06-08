@@ -4,12 +4,16 @@ package com.robot.agent;
 import java.io.IOException;
 
 import com.robot.socket.TCPServer;
+
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.app.TabActivity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -32,10 +36,11 @@ import android.widget.TabWidget;
 import android.widget.TextView;
 import android.widget.TabHost.OnTabChangeListener;
 import android.os.Build;
+import at.abraxas.amarino.AmarinoIntent;
 
 public class MainActivity extends BlunoLibrary {
 	static final String TAG = "RobotAgent";
-
+	static final String DIR_ACTION = "com.robot.agent.action.DIR_ACTION";
 	private TextView display;
 	private String deviceAddress;
 	private LinearLayout layout;
@@ -78,6 +83,9 @@ public class MainActivity extends BlunoLibrary {
 			Log.d(TAG, e.getMessage());
 		}
 		Log.d(TAG, "TCP Server init ok");
+		
+		this.registerReceiver(agentReceiver, new IntentFilter(DIR_ACTION));
+		Log.d(TAG, "registerReceiver ok");
 		//robot = new Robot();
 		
 //		if (savedInstanceState == null) {
@@ -184,6 +192,11 @@ public class MainActivity extends BlunoLibrary {
 			case R.id.stop:{
 				Log.d(TAG,"===========OnClickListener = stop ");
 				serialSend("e");
+				Intent intent= new Intent();
+				intent.setAction(DIR_ACTION);
+				intent.putExtra("msg", "e");
+				sendBroadcast(intent);
+				Log.d(TAG, "sendBroadcast");
 				//robot.stop();
 			}
 				break;
@@ -351,7 +364,31 @@ public class MainActivity extends BlunoLibrary {
 			break;
 		}
 	}
-
+	
+	private BroadcastReceiver agentReceiver = new BroadcastReceiver() { 
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String msg = intent.getStringExtra("msg");
+			Log.d(TAG, " AgentReceive msg:" + msg);
+			if (msg.equals("a")){
+				serialSend("a");
+				Log.d(TAG, "hi a");
+			}else if(msg.equals("b")){
+				serialSend("b");
+				Log.d(TAG, "hi b");
+			}else if(msg.equals("c")){
+				serialSend("c");
+				Log.d(TAG, "hi c");
+			}else if(msg.equals("d")){
+				serialSend("d");
+				Log.d(TAG, "hi d");
+			}else if(msg.equals("e")){
+				serialSend("e");
+				Log.d(TAG, "hi e");
+			}
+		}
+	};
+	
 	@Override
 	public void onSerialReceived(String theString) {
 		Log.d(TAG, theString);
@@ -381,5 +418,7 @@ public class MainActivity extends BlunoLibrary {
         onDestroyProcess();														//onDestroy Process by BlunoLibrary
         TCPServer.stop();
         Log.d(TAG, "TCP Server stop OK");
+        this.unregisterReceiver(agentReceiver);
+        Log.d(TAG, "unregisterReceiver OK");
     }
 }
