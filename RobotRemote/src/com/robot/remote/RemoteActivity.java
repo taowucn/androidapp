@@ -56,8 +56,7 @@ public class RemoteActivity extends ActionBarActivity {
         buttonScan.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				 ClientStart clientStart =  new ClientStart();
-				 clientStart.start();
+
 			}
 		});
 
@@ -70,14 +69,6 @@ public class RemoteActivity extends ActionBarActivity {
 //			getSupportFragmentManager().beginTransaction()
 //					.add(R.id.container, new PlaceholderFragment()).commit();
 //		}
-	}
-	
-	class ClientStart extends Thread{
-		@Override
-		public void run() {
-	        TCPClient.init();
-	        Log.d(TAG, "TCPClient init Down");
-		}
 	}
 	
 	/** create tab list view */
@@ -110,25 +101,25 @@ public class RemoteActivity extends ActionBarActivity {
 	};
 
 	private void buildDrive() {
-//		ImageButton upBtn = (ImageButton) this.findViewById(R.id.up);
-//		// upBtn.setOnClickListener(driveClickListener);
-//		// upBtn.setLongClickable(longClickable);
-//		 upBtn.setOnTouchListener(onTouchListener);
-//		//upBtn.setOnKeyListener(driveKeyListener);
-//		ImageButton downBtn = (ImageButton) this.findViewById(R.id.down);
-//		// downBtn.setOnClickListener(driveClickListener);
-//		// downBtn.setOnKeyListener(driveKeyListener);
-//		downBtn.setOnTouchListener(onTouchListener);
-//		ImageButton leftBtn = (ImageButton) this.findViewById(R.id.left);
-//		// leftBtn.setOnClickListener(driveClickListener);
-//		// leftBtn.setOnKeyListener(driveKeyListener);
-//		leftBtn.setOnTouchListener(onTouchListener);
-//		leftBtn.setOnClickListener(driveClickListener);
-//		ImageButton rightBtn = (ImageButton) this.findViewById(R.id.right);
-//		// rightBtn.setOnClickListener(driveClickListener);
-//		// rightBtn.setOnKeyListener(driveKeyListener);
-//		rightBtn.setOnTouchListener(onTouchListener);
-//		rightBtn.setOnClickListener(driveClickListener);
+		ImageButton upBtn = (ImageButton) this.findViewById(R.id.up);
+		// upBtn.setOnClickListener(driveClickListener);
+		// upBtn.setLongClickable(longClickable);
+		 upBtn.setOnTouchListener(onTouchListener);
+		//upBtn.setOnKeyListener(driveKeyListener);
+		ImageButton downBtn = (ImageButton) this.findViewById(R.id.down);
+		// downBtn.setOnClickListener(driveClickListener);
+		// downBtn.setOnKeyListener(driveKeyListener);
+		downBtn.setOnTouchListener(onTouchListener);
+		ImageButton leftBtn = (ImageButton) this.findViewById(R.id.left);
+		// leftBtn.setOnClickListener(driveClickListener);
+		// leftBtn.setOnKeyListener(driveKeyListener);
+		leftBtn.setOnTouchListener(onTouchListener);
+		leftBtn.setOnClickListener(driveClickListener);
+		ImageButton rightBtn = (ImageButton) this.findViewById(R.id.right);
+		// rightBtn.setOnClickListener(driveClickListener);
+		// rightBtn.setOnKeyListener(driveKeyListener);
+		rightBtn.setOnTouchListener(onTouchListener);
+		rightBtn.setOnClickListener(driveClickListener);
 //		
 		ImageButton stopBtn = (ImageButton) this.findViewById(R.id.stop);
 		stopBtn.setOnClickListener(driveClickListener);
@@ -175,12 +166,16 @@ public class RemoteActivity extends ActionBarActivity {
 			switch (view.getId()) {
 			case R.id.left:
 			case R.id.right:
+				Log.d(TAG,"===========OnClickListener = right ");
+				TCPClient.sendMsg(ProtocolConstant.MSG_CMD_MOTOR_POWER, new byte[] { 1, 2 } );
+				break;
 			case R.id.stop:{
 				Log.d(TAG,"===========OnClickListener = stop ");
-				TCPClient.sendMsg("hi, tao");
+				TCPClient.sendMsg("abc");
+//				TCPClient.sendMsg(ProtocolConstant.MSG_CMD_MOTOR_POWER, new byte[] { 1, 2 } );
 //				serialSend("e");
 				//robot.stop();
-			}
+				}
 				break;
 			}
 			display.append("Stop\n");

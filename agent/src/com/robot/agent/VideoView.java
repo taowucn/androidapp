@@ -132,12 +132,12 @@ public class VideoView extends SurfaceView implements SurfaceHolder.Callback {
 		public byte[] yuv420sp = null;
 
 		public void onPreviewFrame(byte[] data, Camera camera) {
-			long now = System.currentTimeMillis();
-			if (VideoConstant.TIME + VideoConstant.INTERVAL <= now) {
-				PlanarYUVLuminanceSource source = new PlanarYUVLuminanceSource(
-						data, width, height, 0, 0, VideoConstant.WIDTH,
-						VideoConstant.HEIGHT);
-				yuv420sp = data;
+//			long now = System.currentTimeMillis();
+//			if (VideoConstant.TIME + VideoConstant.INTERVAL <= now) {
+//				PlanarYUVLuminanceSource source = new PlanarYUVLuminanceSource(
+//						data, width, height, 0, 0, VideoConstant.WIDTH,
+//						VideoConstant.HEIGHT);
+//				yuv420sp = data;
 			//	 logger.info("viedeo datalength:{}", data.length);
 				// IoBuffer buffer = IoBuffer.allocate(499584);
 //				IoBuffer buffer = IoBuffer.allocate(VideoConstant.SIZE);
@@ -147,8 +147,8 @@ public class VideoView extends SurfaceView implements SurfaceHolder.Callback {
 //				buffer.flip();
 //				// 做一个阻塞式队列发�?�?
 ////				UDPServer.broadcast(buffer);
-				VideoConstant.TIME = now;
-			}
+//				VideoConstant.TIME = now;
+//			}
 		}
 	}
 }

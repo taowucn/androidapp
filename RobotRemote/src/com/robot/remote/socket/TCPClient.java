@@ -1,90 +1,126 @@
 package com.robot.remote.socket;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
-import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.concurrent.TimeUnit;
 
-//import net.roboduino.commons.BaseMsg;
-//import net.roboduino.commons.CodecFactory;
+import net.roboduino.commons.BaseMsg;
+import net.roboduino.commons.CodecFactory;
 
+import org.apache.mina.core.future.ConnectFuture;
+import org.apache.mina.core.session.IoSession;
+import org.apache.mina.filter.codec.ProtocolCodecFilter;
+import org.apache.mina.transport.socket.nio.NioSocketConnector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-//import org.apache.mina.core.future.ConnectFuture;
-//import org.apache.mina.core.session.IoSession;
-//import org.apache.mina.filter.codec.ProtocolCodecFilter;
-//import org.apache.mina.transport.socket.nio.NioSocketConnector;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 import android.util.Log;
 
 public class TCPClient {
-	final static String TAG = "TCPClient";
-	private static final String SERVERIP = "192.168.1.2";
-	private static final int SERVERPORT = 54321;
-	
-	private static Socket mSocket = null;
-	private static BufferedReader mBufferedReader = null;
-	private static PrintWriter mPrintWriter = null;
-	
+	private static final Logger logger = LoggerFactory
+			.getLogger(TCPClient.class);
+	static final String TAG = "TCPClient";
+	private static NioSocketConnector connector;
+	private static IoSession session;
+	private static String ip;
+	private static int port;
+
 	public static void init() {
-//		connector = new NioSocketConnector();
-//		connector.getFilterChain().addLast("codec",
-//				new ProtocolCodecFilter(new CodecFactory()));
-//		connector.setHandler(new RobotCtrlHandler());
-//		connector.getSessionConfig().setReuseAddress(true);
-		try 
-		{
-			//连接服务器
-			mSocket = new Socket(SERVERIP, SERVERPORT);	
-			
-			//取得输入、输出流
-			mBufferedReader = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
-			mPrintWriter=new PrintWriter(mSocket.getOutputStream(), true);
-			Log.d(TAG, "init ok");
-		}
-		catch (Exception e) 
-		{
-			Log.e(TAG, "ERROR: " + e.toString());
-		}
+		connector = new NioSocketConnector();
+		connector.getFilterChain().addLast("codec",
+				new ProtocolCodecFilter(new CodecFactory()));
+		connector.setHandler(new RobotCtrlHandler());
+		connector.getSessionConfig().setReuseAddress(true);
 	}
 
-	public static void sendMsg(String str) {
-		if (mSocket != null && mSocket.isConnected()) {
-			//mSocket.write(str);
-			mPrintWriter.print(str);
-	    	mPrintWriter.flush();
-		}
-	}
-
-	public static void disconnect() {
-		if (mSocket != null && mSocket.isConnected()) {
-			try {
-				mSocket.close();
-			} catch (IOException e) {
-				Log.d(TAG, "" + e.getMessage());
-				e.printStackTrace();
+	public static void connect(String host, int ports)
+			throws InterruptedException {
+		if (session != null && session.isConnected()) {
+			logger.warn("No need to connect twice");
+		} else {
+			ip = host;
+			port = ports;
+			logger.info("Try to connect {}:{}", ip, port);
+			SocketAddress remoteAddress = new InetSocketAddress(ip, port);
+			boolean isConnect = false;
+			int i = 0;
+			while (!isConnect && i < 6) {
+				logger.info("Time:{}", (++i));
+				ConnectFuture connectFuture = connector.connect(remoteAddress);
+				connectFuture.await(2000, TimeUnit.MILLISECONDS);
+				Throwable exception = connectFuture.getException();
+				if (exception != null) {
+					logger.error("e" + exception.getMessage());
+					Thread.sleep(2000);
+				} else {
+					if (connectFuture.isConnected()) {
+						logger.info("Connected successfully");
+						session = connectFuture.getSession();
+						isConnect = true;
+					}
+				}
 			}
-			Log.d(TAG, "session closed");
+			if (!isConnect) {
+				logger.warn("Connect failed");
+			}
+		}
+	}
+
+	/** 发送消息 */
+	public static void sendMsg(byte cmdType, byte[] content) {
+		BaseMsg msg = new BaseMsg(cmdType, content);
+		sendMsg(msg);
+	}
+
+	public static void sendMsg(BaseMsg msg) {
+		if (session != null && session.isConnected()) {
+			session.write(msg);
+		}
+	}
+
+	public static void sendMsg(String msg) {
+		if (session != null && session.isConnected()) {
+			session.write(msg);
+			Log.d(TAG, "clt msg:" + msg);
+		}
+	}
+	
+	public static void disconnect() {
+		if (session != null && session.isConnected()) {
+			session.close(true);
+			session = null;
+			logger.info("session closed");
 		}
 	}
 
 	public static String getIp() {
-		return SERVERIP;
+		return ip;
 	}
 
 	public static int getPort() {
-		return SERVERPORT;
+		return port;
 	}
-	
+	/** 获取本地IP地址 */
 	public static String getLocalIpAddress() {
-		return mSocket.getLocalAddress().toString();
+		try {
+			for (Enumeration<NetworkInterface> en = NetworkInterface
+					.getNetworkInterfaces(); en.hasMoreElements();) {
+				NetworkInterface intf = en.nextElement();
+				for (Enumeration<InetAddress> enumIpAddr = intf
+						.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+					InetAddress inetAddress = enumIpAddr.nextElement();
+					if (!inetAddress.isLoopbackAddress()) {
+						return inetAddress.getHostAddress().toString();
+					}
+				}
+			}
+		} catch (SocketException e) {
+			logger.error(e.getMessage(), e);
+		}
+		return "";
 	}
 }

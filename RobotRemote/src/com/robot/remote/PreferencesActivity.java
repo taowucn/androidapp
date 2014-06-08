@@ -1,8 +1,7 @@
 package com.robot.remote;
 
 import com.robot.remote.socket.TCPClient;
-//import com.robot.remote.socket.UDPClient;
-
+import com.robot.remote.socket.UDPClient;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -18,60 +17,90 @@ import android.preference.PreferenceScreen;
 import android.util.Log;
 
 public class PreferencesActivity extends PreferenceActivity {
-//	private static final Logger logger = LoggerFactory
-//			.getLogger(PreferencesActivity.class);
-	final static String TAG = "PreferencesActivity";
+	private static final Logger logger = LoggerFactory
+			.getLogger(PreferencesActivity.class);
+	static final String TAG = "PreferencesActivity";
 	private CheckBoxPreference tcpSwitchPreference;
-//	private CheckBoxPreference udpSwitchPreference;
+	private CheckBoxPreference udpSwitchPreference;
 	private EditTextPreference addressPreference;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// 鎵?殑鐨勫?灏嗕細鑷姩淇濆瓨鍒癝harePreferences
+		// 所的的值将会自动保存到SharePreferences
 		this.addPreferencesFromResource(R.xml.preferences);
 		// this.getPreferenceManager().getSharedPreferences()
 		// .registerOnSharedPreferenceChangeListener(this);
-		// TCP杩炴帴鎺у埗
+		// TCP连接控制
 		tcpSwitchPreference = (CheckBoxPreference) this
 				.findPreference("tcp_connect");
 		tcpSwitchPreference.setOnPreferenceChangeListener(switchListener);
-		// UDP杩炴帴鎺у埗
-//		udpSwitchPreference = (CheckBoxPreference) this
-//				.findPreference("udp_connect");
-//		udpSwitchPreference.setOnPreferenceChangeListener(switchListener);
-		// 鍦板潃
+		// UDP连接控制
+		udpSwitchPreference = (CheckBoxPreference) this
+				.findPreference("udp_connect");
+		udpSwitchPreference.setOnPreferenceChangeListener(switchListener);
+		// 地址
 		addressPreference = (EditTextPreference) this
 				.findPreference("connect_address");
 		addressPreference.setOnPreferenceChangeListener(addressListener);
-
 	}
 
-	/** TCP/UDP寮?叧鐩戝惉鍣?*/
+	public class SocketClt implements Runnable{
+		@Override
+		public void run() {
+			TCPClient.init();
+			try {
+				TCPClient.connect(addressPreference.getText(), 9600);
+			} catch (InterruptedException e) {
+				Log.d(TAG, "e:" + e.getMessage());
+				e.printStackTrace();
+			}
+		}
+	};
+	/** TCP/UDP开关监听器 */
 	private OnPreferenceChangeListener switchListener = new OnPreferenceChangeListener() {
-
 		public boolean onPreferenceChange(Preference preference, Object obj) {
 			if (StringUtils.equals(preference.getKey(), "tcp_connect")) {
 				if ((Boolean) obj) {
 					preference.setSummary(R.string.connected);
-					TCPClient.init();
-					Log.d(TAG, "TCPClient init ok");
-					// 澶勭悊tcp杩炴帴
+//					TCPClient.init();
+//					try {
+//						TCPClient.connect(addressPreference.getText(), 9600);
+//					} catch (InterruptedException e) {
+//						logger.error(e.getMessage(), e);
+//					}
+					SocketClt clt = new SocketClt();
+					Thread socketclt = new Thread(clt);
+					socketclt.start();
+					// 处理tcp连接
 				} else {
-					// 澶勭悊tcp鏂紑
+					// 处理tcp断开
 					TCPClient.disconnect();
-					Log.d(TAG, "TCPClient disconnect ok");
 					preference.setSummary(R.string.disconnected);
 				}
-			} 
+			} else if (StringUtils.equals(preference.getKey(), "udp_connect")) {
+				if ((Boolean) obj) {
+					preference.setSummary(R.string.connected);
+					UDPClient.init();
+					try {
+						UDPClient.connect(addressPreference.getText(), 9800);
+					} catch (InterruptedException e) {
+						logger.error(e.getMessage(), e);
+					}
+					// 处理udp连接
+				} else {
+					// 处理udp断开
+					UDPClient.disconnect();
+					preference.setSummary(R.string.disconnected);
+				}
+			}
 
 			return true;
 		}
 
 	};
-	
-	/** IP鍦板潃鐩戝惉鍣?*/
+	/** IP地址监听器 */
 	private OnPreferenceChangeListener addressListener = new OnPreferenceChangeListener() {
 		public boolean onPreferenceChange(Preference preference, Object obj) {
 			String address = (String) obj;
@@ -84,21 +113,22 @@ public class PreferencesActivity extends PreferenceActivity {
 	public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
 			Preference preference) {
 		String key = preference.getKey();
-		Log.d(TAG, "key=" + key);
+		logger.info("key={}", key);
 		if (StringUtils.equals(key, "wifi_setting")) {
 			if (tcpSwitchPreference.isChecked()) {
 				tcpSwitchPreference.setSummary(R.string.connected);
 			} else {
 				tcpSwitchPreference.setSummary(R.string.disconnected);
 			}
-//			if (udpSwitchPreference.isChecked()) {
-//				udpSwitchPreference.setSummary(R.string.connected);
-//			} else {
-//				udpSwitchPreference.setSummary(R.string.disconnected);
-//			}
+			if (udpSwitchPreference.isChecked()) {
+				udpSwitchPreference.setSummary(R.string.connected);
+			} else {
+				udpSwitchPreference.setSummary(R.string.disconnected);
+			}
 			addressPreference.setSummary(addressPreference.getText());
 		}
 		return super.onPreferenceTreeClick(preferenceScreen, preference);
+
 	}
 
 	@Override

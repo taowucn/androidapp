@@ -4,7 +4,7 @@
     <string name="app_name">Agent</string>
     <string name="hello_world">Hello Robot!</string>
     <string name="action_settings">Settings</string>
-    <string name="info">Scan</string>
+    <string name="info">Scan BT</string>
     <string name="up">Up</string>
     <string name="down">Down</string>
     <string name="left">Left</string>
