@@ -147,6 +147,7 @@ public class RemoteActivity extends ActionBarActivity {
 				case R.id.left:
 				case R.id.right: {
 					Log.d(TAG,"===========OnKeyListener = stop ");
+					TCPClient.sendMsg(ProtocolConstant.MSG_CMD_IR, new byte[] { 1, 2 });
 //					serialSend("e");
 					//robot.stop();
 				}
@@ -166,16 +167,12 @@ public class RemoteActivity extends ActionBarActivity {
 			switch (view.getId()) {
 			case R.id.left:
 			case R.id.right:
-				Log.d(TAG,"===========OnClickListener = right ");
-				TCPClient.sendMsg(ProtocolConstant.MSG_CMD_MOTOR_POWER, new byte[] { 1, 2 } );
-				break;
 			case R.id.stop:{
 				Log.d(TAG,"===========OnClickListener = stop ");
-				TCPClient.sendMsg("abc");
-//				TCPClient.sendMsg(ProtocolConstant.MSG_CMD_MOTOR_POWER, new byte[] { 1, 2 } );
+				TCPClient.sendMsg(ProtocolConstant.MSG_CMD_IR, new byte[] { 1, 2 });
 //				serialSend("e");
 				//robot.stop();
-				}
+			}
 				break;
 			}
 			display.append("Stop\n");
@@ -196,7 +193,8 @@ public class RemoteActivity extends ActionBarActivity {
 			case MotionEvent.ACTION_UP: {
 				Log.d(TAG,"===========OnTouchListener:ACTION_CANCEL = stop");
 				msg = "Stop";
-//				serialSend("e");
+				TCPClient.sendMsg(ProtocolConstant.MSG_CMD_IR, new byte[] { 1, 2 });
+				//serialSend("e");
 				break;
 			}
 			default:
@@ -215,6 +213,7 @@ public class RemoteActivity extends ActionBarActivity {
 		case R.id.up: {
 			Log.d(TAG,"===========ACTION_MOVE = a");
 			msg = "Foward";
+			TCPClient.sendMsg(ProtocolConstant.MSG_CMD_MOTOR_SPEED, new byte[] { 1, 2 });
 //			serialSend("a");
 			//robot.changeSpeed((byte) 0x01, (byte) 0x01);
 			// msg = CommandUtil.driveMotorS(this, (byte) 0xff, (byte) 0xff);
@@ -223,6 +222,7 @@ public class RemoteActivity extends ActionBarActivity {
 		case R.id.down: {
 			Log.d(TAG,"===========ACTION_MOVE = b");
 			msg = "Back";
+			TCPClient.sendMsg(ProtocolConstant.MSG_CMD_MOTOR_POWER, new byte[] { 1, 2 });
 //			serialSend("b");
 			//robot.changeSpeed((byte) (-0x01), (byte) (-0x01));
 			// msg = CommandUtil.driveMotorS(this, (byte) 0x00, (byte) 0x00);
@@ -231,6 +231,7 @@ public class RemoteActivity extends ActionBarActivity {
 		case R.id.left: {
 			Log.d(TAG,"===========ACTION_MOVE = d");
 			msg = "Left";
+			TCPClient.sendMsg(ProtocolConstant.MSG_CMD_BUMPER, new byte[] { 1, 2 });
 //			serialSend("d");
 			//robot.stop();
 			//robot.changeSpeed((byte) (-0x01), (byte) (0x01));
@@ -240,6 +241,7 @@ public class RemoteActivity extends ActionBarActivity {
 		case R.id.right: {
 			Log.d(TAG,"===========ACTION_MOVE = c");
 			msg = "Right";
+			TCPClient.sendMsg(ProtocolConstant.MSG_CMD_SERVO, new byte[] { 1, 2 });
 //			serialSend("c");
 			//robot.stop();
 			//robot.changeSpeed((byte) (0x01), (byte) (-0x01));
@@ -249,6 +251,7 @@ public class RemoteActivity extends ActionBarActivity {
 		case R.id.stop: {
 			Log.d(TAG,"===========ACTION_MOVE = e");
 			msg = "Stop";
+			TCPClient.sendMsg(ProtocolConstant.MSG_CMD_IR, new byte[] { 1, 2 });
 //			serialSend("e");
 			//robot.stop();
 			// msg = CommandUtil.driveMotorS(this, (byte) 0x80, (byte) 0x80);
